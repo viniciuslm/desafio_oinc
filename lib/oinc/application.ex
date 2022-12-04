@@ -8,6 +8,7 @@ defmodule Oinc.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      Oinc.App,
       # Start the Ecto repository
       Oinc.Repo,
       # Start the Telemetry supervisor
