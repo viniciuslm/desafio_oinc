@@ -16,9 +16,15 @@ defmodule Oinc.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Oinc.PubSub},
       # Start the Endpoint (http/https)
-      OincWeb.Endpoint
+      OincWeb.Endpoint,
       # Start a worker by calling: Oinc.Worker.start_link(arg)
       # {Oinc.Worker, arg}
+
+      # Blog supervisor
+      Oinc.Accounts.Supervisor,
+
+      # Enforce unique constraints
+      Oinc.Support.Unique
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
