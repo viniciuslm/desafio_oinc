@@ -3,7 +3,7 @@ defmodule Oinc.Repo.Migrations.CreateAccountsTable do
 
   def change do
     create table(:accounts, primary_key: false) do
-      add(:id, :uuid, primary_key: true)
+      add(:id, :binary_id, primary_key: true)
       add(:current_balance, :integer)
       add(:status, :text)
 
