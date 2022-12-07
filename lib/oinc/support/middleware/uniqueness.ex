@@ -11,8 +11,8 @@ defmodule Oinc.Support.Middleware.Uniqueness do
     def unique(_command), do: []
   end
 
-  alias Oinc.Support.Unique
   alias Commanded.Middleware.Pipeline
+  alias Oinc.Support.Unique
 
   import Pipeline
 

@@ -21,18 +21,19 @@ defmodule Oinc.Accounts.Projectors.Account do
   end)
 
   project(%DepositedAccount{} = evt, _metadata, fn multi ->
-    with {:ok, %Account{} = account} <- Accounts.get_account(evt.account_id) do
-      Multi.update(
-        multi,
-        :deposited_account,
-        Changeset.change(
-          account,
-          current_balance: evt.new_current_balance
-        )
-      )
-    else
-      # ignore when this happens
-      _ -> multi
-    end
+    handle_deposited_account(Accounts.get_account(evt.account_id), multi, evt)
   end)
+
+  defp handle_deposited_account({:ok, %Account{} = account}, multi, evt) do
+    Multi.update(
+      multi,
+      :deposited_account,
+      Changeset.change(
+        account,
+        current_balance: evt.new_current_balance
+      )
+    )
+  end
+
+  defp handle_deposited_account(_, multi, _), do: multi
 end
