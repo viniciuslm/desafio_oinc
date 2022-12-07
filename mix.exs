@@ -70,7 +70,10 @@ defmodule Oinc.MixProject do
       {:crudry, "~> 2.4.0"},
       {:commanded, "~> 1.3"},
       {:commanded_eventstore_adapter, "~> 1.2"},
-      {:commanded_ecto_projections, "~> 1.2"}
+      {:commanded_ecto_projections, "~> 1.2"},
+      {:exconstructor, "~> 1.1"},
+      {:bcrypt_elixir, "~> 1.0"},
+      {:vex, "~> 0.6"}
     ]
   end
 

@@ -9,6 +9,7 @@ import Config
 
 config :oinc,
   ecto_repos: [Oinc.Repo],
+  event_stores: [Oinc.EventStore],
   generators: [binary_id: true]
 
 # Configures the endpoint
@@ -36,6 +37,14 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :vex,
+  sources: [
+    Oinc.Accounts.Validators,
+    Oinc.Blog.Validators,
+    Oinc.Support.Validators,
+    Vex.Validators
+  ]
+
 config :oinc, Oinc.App,
   event_store: [
     adapter: Commanded.EventStore.Adapters.EventStore,
@@ -43,6 +52,9 @@ config :oinc, Oinc.App,
   ],
   pubsub: :local,
   registry: :local
+
+config :commanded,
+  event_store_adapter: Commanded.EventStore.Adapters.EventStore
 
 config :commanded_ecto_projections, repo: Oinc.Repo
 
