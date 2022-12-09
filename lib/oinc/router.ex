@@ -2,7 +2,15 @@ defmodule Oinc.Router do
   use Commanded.Commands.Router
 
   alias Oinc.Bank.Aggregates.{Account, Address, Client}
-  alias Oinc.Bank.Commands.{CreateAddress, CreateClient, DepositAccount, OpenAccount}
+
+  alias Oinc.Bank.Commands.{
+    CloseAccount,
+    CreateAddress,
+    CreateClient,
+    DepositAccount,
+    OpenAccount,
+    WithdrawnAccount
+  }
 
   alias Oinc.Support.Middleware.Validate
 
@@ -14,8 +22,10 @@ defmodule Oinc.Router do
 
   dispatch(
     [
+      CloseAccount,
       DepositAccount,
-      OpenAccount
+      OpenAccount,
+      WithdrawnAccount
     ],
     to: Account
   )

@@ -8,19 +8,11 @@ defmodule Oinc.Bank.Projectors.Account do
 
   alias Oinc.Bank
 
-  alias Oinc.Bank.Projections.{Account, Client}
+  alias Oinc.Bank.Projections.Account
 
-  alias Oinc.Bank.Events.{AccountOpened, DepositedAccount}
+  alias Oinc.Bank.Events.{AccountClosed, AccountOpened, DepositedAccount, WithdrawnedAccount}
 
-  project(%AccountOpened{} = evt, _metadata, fn multi ->
-    handle_client_account(Bank.get_client(evt.client_id), multi, evt)
-  end)
-
-  project(%DepositedAccount{} = evt, _metadata, fn multi ->
-    handle_deposited_account(Bank.get_account(evt.account_id), multi, evt)
-  end)
-
-  defp handle_client_account({:ok, %Client{}}, multi, evt) do
+  project(%AccountOpened{} = evt, fn multi ->
     Multi.insert(
       multi,
       :account_opened,
@@ -31,20 +23,44 @@ defmodule Oinc.Bank.Projectors.Account do
         status: Account.status().open
       }
     )
-  end
+  end)
 
-  defp handle_client_account(_, multi, _), do: multi
+  project(%AccountClosed{} = evt, fn multi ->
+    {:ok, %Account{} = account} = Bank.get_account(evt.account_id)
 
-  defp handle_deposited_account({:ok, %Account{} = account}, multi, evt) do
     Multi.update(
       multi,
+      :account,
+      Changeset.change(account, status: Account.status().closed)
+    )
+  end)
+
+  project(%DepositedAccount{} = evt, fn multi ->
+    handle_deposited_withdrawned_account(
       :deposited_account,
+      Bank.get_account(evt.account_id),
+      multi,
+      evt
+    )
+  end)
+
+  project(%WithdrawnedAccount{} = evt, fn multi ->
+    handle_deposited_withdrawned_account(
+      :withdrawned_account,
+      Bank.get_account(evt.account_id),
+      multi,
+      evt
+    )
+  end)
+
+  defp handle_deposited_withdrawned_account(name, {:ok, %Account{} = account}, multi, evt) do
+    Multi.update(
+      multi,
+      name,
       Changeset.change(
         account,
         current_balance: evt.new_current_balance
       )
     )
   end
-
-  defp handle_deposited_account(_, multi, _), do: multi
 end

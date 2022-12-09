@@ -6,15 +6,10 @@ defmodule Oinc.Bank.Projectors.Address do
 
   alias Ecto.Multi
 
-  alias Oinc.Bank
   alias Oinc.Bank.Events.AddressCreated
-  alias Oinc.Bank.Projections.{Address, Client}
+  alias Oinc.Bank.Projections.Address
 
-  project(%AddressCreated{} = evt, _metadata, fn multi ->
-    handle_client_address(Bank.get_client(evt.client_id), multi, evt)
-  end)
-
-  defp handle_client_address({:ok, %Client{}}, multi, evt) do
+  project(%AddressCreated{} = evt, fn multi ->
     Multi.insert(
       multi,
       :address_created,
@@ -25,7 +20,5 @@ defmodule Oinc.Bank.Projectors.Address do
         client_id: evt.client_id
       }
     )
-  end
-
-  defp handle_client_address(_, multi, _), do: multi
+  end)
 end

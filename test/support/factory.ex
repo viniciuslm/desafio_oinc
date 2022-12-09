@@ -17,6 +17,7 @@ defmodule Oinc.Factory do
 
   def open_account_params_factory do
     %{
+      "account_id" => nil,
       "initial_balance" => 100,
       "client_id" => nil
     }
@@ -48,6 +49,13 @@ defmodule Oinc.Factory do
     %{
       "name" => "Vinicius Moreira",
       "cpf" => "11111111111"
+    }
+  end
+
+  def client_2_params_factory do
+    %{
+      "name" => "Vinicius Moreira",
+      "cpf" => "22222222222"
     }
   end
 

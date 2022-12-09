@@ -1,6 +1,14 @@
 defmodule Oinc.Bank do
   alias Oinc.Bank.Projectors.Address
-  alias Oinc.Bank.Commands.{CreateAddress, CreateClient, DepositAccount, OpenAccount}
+
+  alias Oinc.Bank.Commands.{
+    CloseAccount,
+    CreateAddress,
+    CreateClient,
+    DepositAccount,
+    OpenAccount,
+    WithdrawnAccount
+  }
 
   alias Oinc.Bank.Projections.{Account, Address, Client}
 
@@ -18,55 +26,20 @@ defmodule Oinc.Bank do
     end
   end
 
-  def open_account(%{"initial_balance" => initial_balance, "client_id" => client_id}) do
-    id = Ecto.UUID.generate()
-
-    dispatch_result =
-      %OpenAccount{
-        initial_balance: initial_balance,
-        client_id: client_id,
-        account_id: id
-      }
-      |> App.dispatch(consistency: :strong)
-
-    case dispatch_result do
-      :ok ->
-        {
-          :ok,
-          %Account{
-            id: id,
-            current_balance: initial_balance,
-            client_id: client_id,
-            status: Account.status().open
-          }
-        }
-
-      reply ->
-        reply
-    end
-  end
+  def open_account(%{"initial_balance" => initial_balance, "client_id" => client_id}),
+    do:
+      check_client_open_account(get_client(client_id), %{
+        "initial_balance" => initial_balance,
+        "client_id" => client_id
+      })
 
   def open_account(_params), do: {:error, :bad_command}
 
-  def deposit(id, amount) do
-    dispatch_result =
-      %DepositAccount{
-        account_id: id,
-        deposit_amount: amount
-      }
-      |> App.dispatch(consistency: :strong)
+  def close_account(id), do: check_account_close_account(get_account(id), id)
 
-    case dispatch_result do
-      :ok ->
-        {
-          :ok,
-          Repo.get!(Account, id)
-        }
+  def deposit(id, amount), do: check_account_deposit(get_account(id), id, amount)
 
-      reply ->
-        reply
-    end
-  end
+  def withdrawn(id, amount), do: check_account_withdrawn(get_account(id), id, amount)
 
   def get_client(id) do
     case Repo.get(Client, id) do
@@ -121,6 +94,119 @@ defmodule Oinc.Bank do
   def create_client(_params), do: {:error, :bad_command}
 
   def create_address(%{"city" => city, "state" => state, "client_id" => client_id}) do
+    check_client_create_address(get_client(client_id), %{
+      "city" => city,
+      "state" => state,
+      "client_id" => client_id
+    })
+  end
+
+  def create_address(_params), do: {:error, :bad_command}
+
+  defp check_client_open_account({:ok, %Client{}}, %{
+         "initial_balance" => initial_balance,
+         "client_id" => client_id
+       }) do
+    id = Ecto.UUID.generate()
+
+    dispatch_result =
+      %OpenAccount{
+        initial_balance: initial_balance,
+        client_id: client_id,
+        account_id: id
+      }
+      |> App.dispatch(consistency: :strong)
+
+    case dispatch_result do
+      :ok ->
+        {
+          :ok,
+          %Account{
+            id: id,
+            current_balance: initial_balance,
+            client_id: client_id,
+            status: Account.status().open
+          }
+        }
+
+      reply ->
+        reply
+    end
+  end
+
+  defp check_client_open_account(_, _), do: {:error, :client_not_found}
+
+  defp check_account_close_account({:ok, %Account{}}, id) do
+    dispatch_result =
+      %CloseAccount{
+        account_id: id
+      }
+      |> App.dispatch(consistency: :strong)
+
+    case dispatch_result do
+      :ok ->
+        {:ok,
+         %Account{
+           id: id,
+           status: Account.status().closed
+         }}
+
+      reply ->
+        reply
+    end
+  end
+
+  defp check_account_close_account(_, _), do: {:error, :not_found}
+
+  defp check_account_deposit({:ok, %Account{}}, id, amount) do
+    dispatch_result =
+      %DepositAccount{
+        account_id: id,
+        deposit_amount: amount
+      }
+      |> App.dispatch(consistency: :strong)
+
+    case dispatch_result do
+      :ok ->
+        {
+          :ok,
+          Repo.get!(Account, id)
+        }
+
+      reply ->
+        reply
+    end
+  end
+
+  defp check_account_deposit(_, _, _), do: {:error, :not_found}
+
+  defp check_account_withdrawn({:ok, %Account{}}, id, amount) do
+    dispatch_result =
+      %WithdrawnAccount{
+        account_id: id,
+        withdrawn_amount: amount
+      }
+      |> App.dispatch(consistency: :strong)
+
+    case dispatch_result do
+      :ok ->
+        {
+          :ok,
+          Repo.get!(Account, id)
+        }
+
+      reply ->
+        reply
+    end
+  end
+
+  defp check_account_withdrawn(_, _, _), do: {:error, :not_found}
+
+  defp check_client_create_address({:ok, %Client{}}, %{
+         "city" => city,
+         "state" => state,
+         "client_id" => client_id
+       }) do
     id = Ecto.UUID.generate()
 
     dispatch_result =
@@ -148,5 +234,5 @@ defmodule Oinc.Bank do
     end
   end
 
-  def create_address(_params), do: {:error, :bad_command}
+  defp check_client_create_address(_, _), do: {:error, :client_not_found}
 end

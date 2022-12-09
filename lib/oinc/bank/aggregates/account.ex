@@ -6,13 +6,10 @@ defmodule Oinc.Bank.Aggregates.Account do
 
   alias __MODULE__
 
-  alias Oinc.Bank.Commands.{DepositAccount, OpenAccount}
+  alias Oinc.Bank.Commands.{CloseAccount, DepositAccount, OpenAccount, WithdrawnAccount}
 
-  alias Oinc.Bank.Events.{AccountOpened, DepositedAccount}
+  alias Oinc.Bank.Events.{AccountClosed, AccountOpened, DepositedAccount, WithdrawnedAccount}
 
-  @doc """
-  Publish an article
-  """
   def execute(%Account{id: nil}, %OpenAccount{
         account_id: account_id,
         client_id: client_id,
@@ -36,8 +33,24 @@ defmodule Oinc.Bank.Aggregates.Account do
     {:error, :initial_balance_must_be_above_zero}
   end
 
-  def execute(%Account{}, %OpenAccount{}) do
-    {:error, :account_already_opened}
+  def execute(
+        %Account{id: account_id, closed?: true},
+        %CloseAccount{
+          account_id: account_id
+        }
+      ) do
+    {:error, :account_already_closed}
+  end
+
+  def execute(
+        %Account{id: account_id, closed?: false},
+        %CloseAccount{
+          account_id: account_id
+        }
+      ) do
+    %AccountClosed{
+      account_id: account_id
+    }
   end
 
   def execute(
@@ -72,10 +85,38 @@ defmodule Oinc.Bank.Aggregates.Account do
   end
 
   def execute(
+        %Account{id: account_id, closed?: false, current_balance: current_balance},
+        %WithdrawnAccount{
+          account_id: account_id,
+          withdrawn_amount: amount
+        }
+      )
+      when amount > 0 do
+    if current_balance - amount >= 0 do
+      %WithdrawnedAccount{
+        account_id: account_id,
+        new_current_balance: current_balance - amount
+      }
+    else
+      {:error, :insufficient_funds}
+    end
+  end
+
+  def execute(
         %Account{},
-        %DepositAccount{}
+        %WithdrawnAccount{
+          withdrawn_amount: amount
+        }
+      )
+      when amount <= 0 do
+    {:error, :amount_must_be_above_zero}
+  end
+
+  def execute(
+        %Account{id: account_id, closed?: true},
+        %WithdrawnAccount{account_id: account_id}
       ) do
-    {:error, :not_found}
+    {:error, :account_closed}
   end
 
   # state mutators
@@ -97,6 +138,18 @@ defmodule Oinc.Bank.Aggregates.Account do
   end
 
   def apply(
+        %Account{id: account_id} = account,
+        %AccountClosed{
+          account_id: account_id
+        }
+      ) do
+    %Account{
+      account
+      | closed?: true
+    }
+  end
+
+  def apply(
         %Account{
           id: account_id
         } = account,
@@ -110,4 +163,23 @@ defmodule Oinc.Bank.Aggregates.Account do
       | current_balance: new_current_balance
     }
   end
+
+  def apply(
+        %Account{
+          id: account_id
+        } = account,
+        %WithdrawnedAccount{
+          account_id: account_id,
+          new_current_balance: new_current_balance
+        }
+      ) do
+    %Account{
+      account
+      | current_balance: new_current_balance
+    }
+  end
+
+  # defp check_client({:ok, %Client{}}, return), do: return
+
+  # defp check_client(_, _), do: {:error, :client_not_found}
 end
