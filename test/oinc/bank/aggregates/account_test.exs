@@ -1,18 +1,19 @@
-defmodule Oinc.Accounts.Aggregates.AccountTest do
-  use Oinc.AggregateCase, aggregate: Oinc.Accounts.Aggregates.Account
+defmodule Oinc.Bank.Aggregates.AccountTest do
+  use Oinc.AggregateCase, aggregate: Oinc.Bank.Aggregates.Account
 
-  alias Oinc.Accounts.Commands.DepositAccount
-  alias Oinc.Accounts.Events.DepositedAccount
+  alias Oinc.Bank.Commands.DepositAccount
+  alias Oinc.Bank.Events.DepositedAccount
 
   describe "open account" do
     @tag :unit
     test "should succeed when valid" do
       account_id = Ecto.UUID.generate()
+      client_id = Ecto.UUID.generate()
 
       assert_events(
-        build(:open_account, account_id: account_id),
+        build(:open_account, account_id: account_id, client_id: client_id),
         [
-          build(:account_opened, account_id: account_id)
+          build(:account_opened, account_id: account_id, client_id: client_id)
         ]
       )
     end
