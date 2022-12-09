@@ -93,6 +93,16 @@ defmodule Oinc.Bank do
 
   def create_client(_params), do: {:error, :bad_command}
 
+  def get_address(id) do
+    case Repo.get(Address, id) do
+      %Address{} = address ->
+        {:ok, address}
+
+      _reply ->
+        {:error, :not_found}
+    end
+  end
+
   def create_address(%{"city" => city, "state" => state, "client_id" => client_id}) do
     check_client_create_address(get_client(client_id), %{
       "city" => city,

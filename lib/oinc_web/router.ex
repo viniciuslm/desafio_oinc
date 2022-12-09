@@ -15,9 +15,14 @@ defmodule OincWeb.Router do
   end
 
   scope "/", OincWeb do
-    pipe_through :browser
+    pipe_through [:browser, :api]
 
-    get "/", PageController, :index
+    forward "/graphql", Absinthe.Plug, schema: OincWeb.Bank.Schema
+
+    forward "/graphiql", Absinthe.Plug.GraphiQL,
+      schema: OincWeb.Bank.Schema,
+      socket: OincWeb.Bank.BankSocket,
+      interface: :simple
   end
 
   # Other scopes may use custom stacks.
