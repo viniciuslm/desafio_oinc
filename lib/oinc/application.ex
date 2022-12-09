@@ -20,8 +20,8 @@ defmodule Oinc.Application do
       # Start a worker by calling: Oinc.Worker.start_link(arg)
       # {Oinc.Worker, arg}
 
-      # Blog supervisor
-      Oinc.Accounts.Supervisor,
+      # Bank supervisor
+      Oinc.Bank.Supervisor,
 
       # Enforce unique constraints
       Oinc.Support.Unique

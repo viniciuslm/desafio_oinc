@@ -1,24 +1,27 @@
-defmodule Oinc.Accounts.Aggregates.Account do
+defmodule Oinc.Bank.Aggregates.Account do
   defstruct id: nil,
             current_balance: nil,
+            client_id: nil,
             closed?: false
 
   alias __MODULE__
 
-  alias Oinc.Accounts.Commands.{DepositAccount, OpenAccount}
+  alias Oinc.Bank.Commands.{DepositAccount, OpenAccount}
 
-  alias Oinc.Accounts.Events.{AccountOpened, DepositedAccount}
+  alias Oinc.Bank.Events.{AccountOpened, DepositedAccount}
 
   @doc """
   Publish an article
   """
   def execute(%Account{id: nil}, %OpenAccount{
         account_id: account_id,
+        client_id: client_id,
         initial_balance: initial_balance
       })
       when initial_balance > 0 do
     %AccountOpened{
       account_id: account_id,
+      client_id: client_id,
       initial_balance: initial_balance
     }
   end
@@ -81,12 +84,14 @@ defmodule Oinc.Accounts.Aggregates.Account do
         %Account{} = account,
         %AccountOpened{
           account_id: account_id,
+          client_id: client_id,
           initial_balance: initial_balance
         }
       ) do
     %Account{
       account
       | id: account_id,
+        client_id: client_id,
         current_balance: initial_balance
     }
   end

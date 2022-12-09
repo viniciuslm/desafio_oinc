@@ -39,8 +39,7 @@ config :phoenix, :json_library, Jason
 
 config :vex,
   sources: [
-    Oinc.Accounts.Validators,
-    Oinc.Blog.Validators,
+    Oinc.Bank.Validators,
     Oinc.Support.Validators,
     Vex.Validators
   ]

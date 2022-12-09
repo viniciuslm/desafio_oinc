@@ -1,4 +1,4 @@
-defmodule Oinc.Accounts.Commands.DepositAccount do
+defmodule Oinc.Bank.Commands.DepositAccount do
   @enforce_keys [:account_id]
 
   defstruct [:account_id, :deposit_amount]
@@ -6,7 +6,7 @@ defmodule Oinc.Accounts.Commands.DepositAccount do
   use ExConstructor
   use Vex.Struct
 
-  alias Oinc.Accounts.Commands.DepositAccount
+  alias Oinc.Bank.Commands.DepositAccount
 
   validates(:account_id, presence: [message: "can't be empty"], uuid: true)
 
