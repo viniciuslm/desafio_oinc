@@ -14,7 +14,7 @@ defmodule Oinc.Bank.Aggregates.Address do
   """
   def execute(%Address{id: nil}, %CreateAddress{} = create) do
     %AddressCreated{
-      address_id: create.client_id,
+      address_id: create.address_id,
       client_id: create.client_id,
       city: create.city,
       state: create.state
@@ -23,11 +23,10 @@ defmodule Oinc.Bank.Aggregates.Address do
 
   # state mutators
 
-  def apply(%Address{} = client, %AddressCreated{} = created) do
+  def apply(%Address{} = address, %AddressCreated{} = created) do
     %Address{
-      client
-      | id: created.client_id,
-        client_id: created.client_id,
+      address
+      | id: created.address_id,
         city: created.city,
         state: created.state
     }

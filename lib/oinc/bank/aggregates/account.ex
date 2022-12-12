@@ -125,14 +125,12 @@ defmodule Oinc.Bank.Aggregates.Account do
         %Account{} = account,
         %AccountOpened{
           account_id: account_id,
-          client_id: client_id,
           initial_balance: initial_balance
         }
       ) do
     %Account{
       account
       | id: account_id,
-        client_id: client_id,
         current_balance: initial_balance
     }
   end
@@ -178,8 +176,4 @@ defmodule Oinc.Bank.Aggregates.Account do
       | current_balance: new_current_balance
     }
   end
-
-  # defp check_client({:ok, %Client{}}, return), do: return
-
-  # defp check_client(_, _), do: {:error, :client_not_found}
 end

@@ -17,7 +17,11 @@ defmodule Oinc.Bank do
   import Ecto.Query
 
   def get_account(id) do
-    case Repo.get(Account, id) do
+    case Account
+         |> join(:left, [a], a2 in Account, on: a2.client_id == a.client_id and a2.id != a.id)
+         |> where([a], a.id == ^id)
+         |> preload([:client_accounts])
+         |> Repo.one() do
       %Account{} = account ->
         {:ok, account}
 
@@ -27,6 +31,9 @@ defmodule Oinc.Bank do
   end
 
   def open_account(%{"initial_balance" => initial_balance, "client_id" => client_id}),
+    do: open_account(%{initial_balance: initial_balance, client_id: client_id})
+
+  def open_account(%{initial_balance: initial_balance, client_id: client_id}),
     do:
       check_client_open_account(get_client(client_id), %{
         "initial_balance" => initial_balance,
@@ -42,7 +49,11 @@ defmodule Oinc.Bank do
   def withdrawn(id, amount), do: check_account_withdrawn(get_account(id), id, amount)
 
   def get_client(id) do
-    case Repo.get(Client, id) do
+    case Client
+         |> join(:left, [c], a in Address, on: c.id == a.client_id)
+         |> where([c], c.id == ^id)
+         |> preload([:address])
+         |> Repo.one() do
       %Client{} = client ->
         {:ok, client}
 
@@ -63,7 +74,9 @@ defmodule Oinc.Bank do
 
   def query_client(cpf), do: from(a in Client, where: a.cpf == ^cpf)
 
-  def create_client(%{"cpf" => cpf, "name" => name}) do
+  def create_client(%{"cpf" => cpf, "name" => name}), do: create_client(%{cpf: cpf, name: name})
+
+  def create_client(%{cpf: cpf, name: name}) do
     id = Ecto.UUID.generate()
 
     dispatch_result =
@@ -103,7 +116,13 @@ defmodule Oinc.Bank do
     end
   end
 
-  def create_address(%{"city" => city, "state" => state, "client_id" => client_id}) do
+  def get_address_by_client_id(client_id),
+    do: Repo.get_by(Address, client_id: client_id) |> IO.inspect()
+
+  def create_address(%{"city" => city, "state" => state, "client_id" => client_id}),
+    do: create_address(%{city: city, state: state, client_id: client_id})
+
+  def create_address(%{city: city, state: state, client_id: client_id}) do
     check_client_create_address(get_client(client_id), %{
       "city" => city,
       "state" => state,
@@ -235,6 +254,7 @@ defmodule Oinc.Bank do
           %Address{
             id: id,
             state: state,
+            client_id: client_id,
             city: city
           }
         }
