@@ -374,6 +374,59 @@ defmodule OincWeb.SchemaTest do
       assert response == expected_response
     end
 
+    test "when a valid id is given, returns the account with accounts client", %{
+      conn: conn,
+      client: client
+    } do
+      open_account = build(:open_account_params, %{"client_id" => client.id})
+      Bank.open_account(open_account)
+      assert {:ok, %Account{} = account} = Bank.open_account(open_account)
+
+      query = """
+      {
+        account(id: "#{account.id}") {
+          current_balance,
+          status,
+          client {
+            name,
+            cpf
+          },
+          client_accounts {
+            current_balance,
+            status
+          }
+        }
+      }
+      """
+
+      expected_response = %{
+        "data" => %{
+          "account" => %{
+            "client" => %{"cpf" => "11111111111", "name" => "Vinicius Moreira"},
+            "current_balance" => 100,
+            "status" => "open",
+            "client_accounts" => [
+              %{
+                "current_balance" => 100,
+                "status" => "open"
+              },
+              %{
+                "current_balance" => 100,
+                "status" => "open"
+              }
+            ]
+          }
+        }
+      }
+
+      response =
+        conn
+        |> post("/api/graphql", %{query: query})
+        |> json_response(:ok)
+
+      assert response == expected_response
+    end
+
     test "when the account does not exist, returns an error", %{conn: conn} do
       query = """
       {
@@ -443,6 +496,9 @@ defmodule OincWeb.SchemaTest do
             client {
               name,
               cpf
+            },
+            client_accounts {
+              id
             }
           }
         }
@@ -712,51 +768,4 @@ defmodule OincWeb.SchemaTest do
              } == response
     end
   end
-
-  # describe "subscription" do
-  #   test "client subscription", %{socket: socket} do
-  #     mutation = """
-  #       mutation {
-  #         createClient(input: {
-  #           name: "teste",
-  #           cpf: "11111111111"
-  #         }) {
-  #           name
-  #         }
-  #       }
-  #     """
-
-  #     subscription = """
-  #       subscription {
-  #         newClient {
-  #           name
-  #         }
-  #       }
-  #     """
-
-  #     # setup subscription
-  #     socket_ref = push_doc(socket, subscription)
-  #     assert_reply socket_ref, :ok, %{subscriptionId: subscription_id}
-
-  #     # setup mutation
-  #     socket_ref = push_doc(socket, mutation)
-  #     assert_reply socket_ref, :ok, mutation_response
-
-  #     expected_mutation_response = %{
-  #       data: %{
-  #         "createClient" => %{"name" => "teste"}
-  #       }
-  #     }
-
-  #     expected_subscription_response = %{
-  #       result: %{data: %{"newClient" => %{"name" => "teste"}}},
-  #       subscriptionId: subscription_id
-  #     }
-
-  #     assert mutation_response == expected_mutation_response
-
-  #     assert_push "subscription:data", subscription_responde
-  #     assert subscription_responde == expected_subscription_response
-  #   end
-  # end
 end

@@ -73,7 +73,8 @@ defmodule Oinc.MixProject do
       {:commanded_ecto_projections, "~> 1.2"},
       {:exconstructor, "~> 1.1"},
       {:bcrypt_elixir, "~> 1.0"},
-      {:vex, "~> 0.6"}
+      {:vex, "~> 0.6"},
+      {:dataloader, "~> 1.0"}
     ]
   end
 

@@ -1,7 +1,9 @@
 defmodule OincWeb.Bank.Schema.Types.Account do
   use Absinthe.Schema.Notation
 
-  alias OincWeb.Bank.Resolvers
+  alias Oinc.Bank
+
+  import Absinthe.Resolution.Helpers, only: [dataloader: 3]
 
   @desc "Logic account representation"
   object :account do
@@ -9,11 +11,13 @@ defmodule OincWeb.Bank.Schema.Types.Account do
     field :current_balance, non_null(:integer), description: "Accounts current_balance"
     field :status, non_null(:string), description: "Accounts status"
 
-    field :client, non_null(:client),
-      resolve: &Resolvers.Account.get_client/3,
-      description: "Accounts client_id"
+    field :client, non_null(:client), description: "Client Account" do
+      resolve dataloader(Bank, :client, args: %{scope: :client})
+    end
 
-    # field :client_accounts, description: "Accounts Clients"
+    field :client_accounts, list_of(:account), description: "Accounts Client Account" do
+      resolve dataloader(Bank, :client_accounts, args: %{scope: :client})
+    end
   end
 
   input_object :open_account_input do

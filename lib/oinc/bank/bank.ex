@@ -132,6 +132,10 @@ defmodule Oinc.Bank do
 
   def create_address(_params), do: {:error, :bad_command}
 
+  def datasource do
+    Dataloader.Ecto.new(Repo, query: &query/2)
+  end
+
   defp check_client_open_account({:ok, %Client{}}, %{
          "initial_balance" => initial_balance,
          "client_id" => client_id
@@ -265,4 +269,8 @@ defmodule Oinc.Bank do
   end
 
   defp check_client_create_address(_, _), do: {:error, :client_not_found}
+
+  defp query(model, _) do
+    model
+  end
 end
