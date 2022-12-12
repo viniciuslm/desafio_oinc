@@ -13,7 +13,7 @@ defmodule OincWeb.Bank.Schema.Types.Account do
       resolve: &Resolvers.Account.get_client/3,
       description: "Accounts client_id"
 
-    field :client_accounts, description: "Accounts Clients"
+    # field :client_accounts, description: "Accounts Clients"
   end
 
   input_object :open_account_input do
