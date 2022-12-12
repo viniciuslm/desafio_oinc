@@ -7,6 +7,7 @@ defmodule OincWeb.Bank.Schema.Types.Client do
     field :cpf, non_null(:string), description: "Client cpf"
     field :name, non_null(:string), description: "Client name"
     field :status, non_null(:string), description: "Client status"
+    field :address, non_null(:address), description: "Address Client"
   end
 
   input_object :create_client_input do

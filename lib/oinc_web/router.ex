@@ -14,15 +14,18 @@ defmodule OincWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", OincWeb do
-    pipe_through [:browser, :api]
+  scope "/api/" do
+    pipe_through :api
 
     forward "/graphql", Absinthe.Plug, schema: OincWeb.Bank.Schema
 
+    # coveralls-ignore-start
     forward "/graphiql", Absinthe.Plug.GraphiQL,
       schema: OincWeb.Bank.Schema,
       socket: OincWeb.Bank.BankSocket,
       interface: :simple
+
+    # coveralls-ignore-stop
   end
 
   # Other scopes may use custom stacks.

@@ -8,7 +8,7 @@ defmodule OincWeb.Bank.Schema.Types.Root do
   alias Resolvers.Address, as: AddresssResolver
   alias Resolvers.Client, as: ClientsResolver
 
-  import_types(Types.Car)
+  import_types(Types.Account)
   import_types(Types.Custom.UUID4)
   import_types(Types.Client)
   import_types(Types.Address)
@@ -50,34 +50,36 @@ defmodule OincWeb.Bank.Schema.Types.Root do
       middleware(TranslateErrors)
     end
 
-    @desc "Create a new account"
-    field :create_account, type: :account do
-      arg(:input, non_null(:create_account_input))
+    @desc "Open account"
+    field :open_account, type: :account do
+      arg(:input, non_null(:open_account_input))
 
       resolve(&AccountResolver.open/2)
       middleware(TranslateErrors)
     end
-  end
 
-  object :root_subscription do
-    field :new_client, :client do
-      config(fn _args, _info ->
-        {:ok, topic: "new_client_topic"}
-      end)
+    @desc "Close account"
+    field :close_account, type: :account do
+      arg(:input, non_null(:close_account_input))
 
-      trigger(:create_client, topic: fn _ -> ["new_client_topic"] end)
+      resolve(&AccountResolver.close/2)
+      middleware(TranslateErrors)
     end
 
-    field :new_address, :address do
-      config(fn _args, _info ->
-        {:ok, topic: "new_address_topic"}
-      end)
+    @desc "Deposit account"
+    field :deposit_account, type: :account do
+      arg(:input, non_null(:deposit_account_input))
+
+      resolve(&AccountResolver.deposit/2)
+      middleware(TranslateErrors)
     end
 
-    field :open_account, :account do
-      config(fn _args, _info ->
-        {:ok, topic: "open_account_topic"}
-      end)
+    @desc "Withdrawn account"
+    field :withdrawn_account, type: :account do
+      arg(:input, non_null(:withdrawn_account_input))
+
+      resolve(&AccountResolver.withdrawn/2)
+      middleware(TranslateErrors)
     end
   end
 end
