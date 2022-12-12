@@ -117,7 +117,7 @@ defmodule Oinc.Bank do
   end
 
   def get_address_by_client_id(client_id),
-    do: Repo.get_by(Address, client_id: client_id) |> IO.inspect()
+    do: Repo.get_by(Address, client_id: client_id)
 
   def create_address(%{"city" => city, "state" => state, "client_id" => client_id}),
     do: create_address(%{city: city, state: state, client_id: client_id})
