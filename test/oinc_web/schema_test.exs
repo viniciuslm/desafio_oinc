@@ -443,9 +443,6 @@ defmodule OincWeb.SchemaTest do
             client {
               name,
               cpf
-            },
-            client_accounts {
-              id
             }
           }
         }
