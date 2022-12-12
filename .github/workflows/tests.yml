@@ -2,18 +2,18 @@ name: Verify Tests
 
 on: pull_request
 
-jobs: 
+jobs:
   coverage:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        elixir: [1.13] 
+        elixir: [1.13]
         otp: [24]
     steps:
       - uses: actions/checkout@v2
       - uses: erlef/setup-elixir@v1
         with:
-          elixir-version: ${{ matrix.elixir }} 
+          elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
       - uses: actions/cache@v1
         id: mix-cache-coverage
@@ -27,14 +27,16 @@ jobs:
           mix local.hex --force
           mix deps.get
           mix ecto.create
+          mix event_store.create
+          mix event_store.init
       - name: ===> Verify Coverage and Tests
-        run: mix coveralls.html 
-    services: 
+        run: mix coveralls.html
+    services:
       pg:
-        image: postgres:13 
-        ports: ['5432:5432'] 
-        env: 
-          POSTGRES_PASSWORD: postgres 
+        image: postgres:13
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready 
           --health-interval 10s 

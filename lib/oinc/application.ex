@@ -8,6 +8,7 @@ defmodule Oinc.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      Oinc.App,
       # Start the Ecto repository
       Oinc.Repo,
       # Start the Telemetry supervisor
@@ -15,9 +16,15 @@ defmodule Oinc.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Oinc.PubSub},
       # Start the Endpoint (http/https)
-      OincWeb.Endpoint
+      OincWeb.Endpoint,
       # Start a worker by calling: Oinc.Worker.start_link(arg)
       # {Oinc.Worker, arg}
+
+      # Bank supervisor
+      Oinc.Bank.Supervisor,
+
+      # Enforce unique constraints
+      Oinc.Support.Unique
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

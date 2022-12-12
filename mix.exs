@@ -30,7 +30,7 @@ defmodule Oinc.MixProject do
   def application do
     [
       mod: {Oinc.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :eventstore]
     ]
   end
 
@@ -69,7 +69,12 @@ defmodule Oinc.MixProject do
       {:absinthe_phoenix, "~> 2.0.0"},
       {:crudry, "~> 2.4.0"},
       {:commanded, "~> 1.3"},
-      {:commanded_ecto_projections, "~> 1.2"}
+      {:commanded_eventstore_adapter, "~> 1.2"},
+      {:commanded_ecto_projections, "~> 1.2"},
+      {:exconstructor, "~> 1.1"},
+      {:bcrypt_elixir, "~> 1.0"},
+      {:vex, "~> 0.6"},
+      {:dataloader, "~> 1.0"}
     ]
   end
 

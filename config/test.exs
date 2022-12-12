@@ -13,6 +13,15 @@ config :oinc, Oinc.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
+# Configures the event store database
+config :oinc, Oinc.EventStore,
+  serializer: Commanded.Serialization.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "oinc_eventstore_test",
+  hostname: "localhost",
+  pool_size: 10
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :oinc, OincWeb.Endpoint,
