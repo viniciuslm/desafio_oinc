@@ -1,6 +1,5 @@
 defmodule OincWeb.SchemaTest do
   use OincWeb.ConnCase
-  use OincWeb.SubscriptionCase
 
   alias Oinc.Bank
   alias Oinc.Bank.Projections.{Account, Address, Client}
@@ -768,4 +767,51 @@ defmodule OincWeb.SchemaTest do
              } == response
     end
   end
+
+  # describe "subscription" do
+  #   test "client subscription", %{socket: socket} do
+  #     mutation = """
+  #       mutation {
+  #         createClient(input: {
+  #           name: "teste",
+  #           cpf: "11111111111"
+  #         }) {
+  #           name
+  #         }
+  #       }
+  #     """
+
+  #     subscription = """
+  #       subscription {
+  #         newClient {
+  #           name
+  #         }
+  #       }
+  #     """
+
+  #     # setup subscription
+  #     socket_ref = push_doc(socket, subscription)
+  #     assert_reply socket_ref, :ok, %{subscriptionId: subscription_id}
+
+  #     # setup mutation
+  #     socket_ref = push_doc(socket, mutation)
+  #     assert_reply socket_ref, :ok, mutation_response
+
+  #     expected_mutation_response = %{
+  #       data: %{
+  #         "createClient" => %{"name" => "teste"}
+  #       }
+  #     }
+
+  #     expected_subscription_response = %{
+  #       result: %{data: %{"newClient" => %{"name" => "teste"}}},
+  #       subscriptionId: subscription_id
+  #     }
+
+  #     assert mutation_response == expected_mutation_response
+
+  #     assert_push "subscription:data", subscription_responde
+  #     assert subscription_responde == expected_subscription_response
+  #   end
+  # end
 end
