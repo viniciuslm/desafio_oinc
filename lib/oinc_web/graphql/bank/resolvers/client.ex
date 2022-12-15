@@ -1,4 +1,4 @@
-defmodule OincWeb.Bank.Resolvers.Client do
+defmodule OincWeb.GraphqlBank.Resolvers.Client do
   alias Oinc.Bank
 
   def get(%{id: client_id}, _context), do: Bank.get_client(client_id)

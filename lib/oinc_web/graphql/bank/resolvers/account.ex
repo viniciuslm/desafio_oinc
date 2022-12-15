@@ -1,4 +1,4 @@
-defmodule OincWeb.Bank.Resolvers.Account do
+defmodule OincWeb.GraphqlBank.Resolvers.Account do
   # alias Absinthe.Subscription
   alias Oinc.Bank
   # alias OincWeb.Endpoint

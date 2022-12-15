@@ -1,9 +1,9 @@
-defmodule OincWeb.Bank.Schema do
+defmodule OincWeb.GraphqlBank.Schema do
   use Absinthe.Schema
 
   alias Oinc.Bank
 
-  import_types(OincWeb.Bank.Schema.Types.Root)
+  import_types(OincWeb.GraphqlBank.Schema.Types.Root)
 
   query do
     import_fields(:root_query)
@@ -12,6 +12,10 @@ defmodule OincWeb.Bank.Schema do
   mutation do
     import_fields(:root_mutation)
   end
+
+  # subscription do
+  #   import_fields(:root_subscription)
+  # end
 
   def context(ctx) do
     loader =

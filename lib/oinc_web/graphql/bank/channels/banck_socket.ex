@@ -1,4 +1,4 @@
-defmodule OincWeb.Bank.BankSocket do
+defmodule OincWeb.GraphqlBank.BankSocket do
   use Phoenix.Socket
   use Absinthe.Phoenix.Socket, schema: FoodexWeb.Schema
 

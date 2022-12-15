@@ -1,4 +1,4 @@
-defmodule OincWeb.Bank.Schema.Types.Custom.UUID4 do
+defmodule OincWeb.GraphqlBank.Schema.Types.Custom.UUID4 do
   @moduledoc """
   The UUID4 scalar type allows UUID4 compliant strings to be passed in and out.
   Requires `{ :elixir_uuid, "~> 1.2" }` package: https://github.com/zyro/elixir-uuid

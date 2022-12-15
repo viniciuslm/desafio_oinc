@@ -1,9 +1,9 @@
-defmodule OincWeb.Bank.Schema.Types.Root do
+defmodule OincWeb.GraphqlBank.Schema.Types.Root do
   use Absinthe.Schema.Notation
 
   alias Crudry.Middlewares.TranslateErrors
-  alias OincWeb.Bank.Resolvers
-  alias OincWeb.Bank.Schema.Types
+  alias OincWeb.GraphqlBank.Resolvers
+  alias OincWeb.GraphqlBank.Schema.Types
   alias Resolvers.Account, as: AccountResolver
   alias Resolvers.Address, as: AddresssResolver
   alias Resolvers.Client, as: ClientsResolver
@@ -82,4 +82,26 @@ defmodule OincWeb.Bank.Schema.Types.Root do
       middleware(TranslateErrors)
     end
   end
+
+  # object :root_subscription do
+  #   field :new_client, :client do
+  #     config(fn _args, _info ->
+  #       {:ok, topic: "new_client_topic"}
+  #     end)
+
+  #     trigger(:create_client, topic: fn _ -> ["new_client_topic"] end)
+  #   end
+
+  #   field :new_address, :address do
+  #     config(fn _args, _info ->
+  #       {:ok, topic: "new_address_topic"}
+  #     end)
+  #   end
+
+  #   field :open_account, :account do
+  #     config(fn _args, _info ->
+  #       {:ok, topic: "open_account_topic"}
+  #     end)
+  #   end
+  # end
 end
