@@ -1,4 +1,4 @@
-defmodule OincWeb.GraphqlBank.Schema.Types.Account do
+defmodule OincWeb.Graphql.Bank.Schema.Types.Account do
   use Absinthe.Schema.Notation
 
   alias Oinc.Bank

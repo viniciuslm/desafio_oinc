@@ -1,4 +1,4 @@
-defmodule OincWeb.GraphqlBank.Resolvers.Address do
+defmodule OincWeb.Graphql.Bank.Resolvers.Address do
   alias Oinc.Bank
 
   def get(%{id: address_id}, _context), do: Bank.get_address(address_id)

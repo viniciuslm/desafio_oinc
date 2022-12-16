@@ -17,12 +17,12 @@ defmodule OincWeb.Router do
   scope "/api/" do
     pipe_through :api
 
-    forward "/graphql", Absinthe.Plug, schema: OincWeb.GraphqlBank.Schema
+    forward "/graphql", Absinthe.Plug, schema: OincWeb.Graphql.Bank.Schema
 
     # coveralls-ignore-start
     forward "/graphiql", Absinthe.Plug.GraphiQL,
-      schema: OincWeb.GraphqlBank.Schema,
-      socket: OincWeb.GraphqlBank.BankSocket,
+      schema: OincWeb.Graphql.Bank.Schema,
+      socket: OincWeb.BankSocket,
       interface: :simple
 
     # coveralls-ignore-stop
