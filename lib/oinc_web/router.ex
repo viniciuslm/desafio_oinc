@@ -17,15 +17,30 @@ defmodule OincWeb.Router do
   scope "/api/" do
     pipe_through :api
 
-    forward "/graphql", Absinthe.Plug, schema: OincWeb.Bank.Schema
+    forward "/graphql", Absinthe.Plug, schema: OincWeb.Graphql.Bank.Schema
 
     # coveralls-ignore-start
     forward "/graphiql", Absinthe.Plug.GraphiQL,
-      schema: OincWeb.Bank.Schema,
-      socket: OincWeb.Bank.BankSocket,
+      schema: OincWeb.Graphql.Bank.Schema,
+      socket: OincWeb.BankSocket,
       interface: :simple
 
     # coveralls-ignore-stop
+  end
+
+  scope "/", OincWeb do
+    pipe_through :browser
+
+    live "/", Live.Bank, :index
+    live "/accounts", Live.Bank.Accounts, :index
+    live "/accounts/open", Live.Bank.Accounts, :open
+    live "/accounts/:id/deposit", Live.Bank.Accounts, :deposit
+    live "/accounts/:id/withdrawn", Live.Bank.Accounts, :withdrawn
+    live "/accounts/:id/close", Live.Bank.Accounts, :close
+    live "/clients", Live.Bank.Clients, :index
+    live "/clients/new", Live.Bank.Clients, :new
+    live "/clients/:id/address", Live.Bank.Clients, :address
+    live "/subscriptiom", Live.Bank.Subscription, :index
   end
 
   # Other scopes may use custom stacks.

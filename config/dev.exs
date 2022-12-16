@@ -34,7 +34,7 @@ config :oinc, OincWeb.Endpoint,
   secret_key_base: "HM65gBtbdRoIWkA/6vD0KJ1HYNu+/qilc3+Fj73Sw3rvUnET6N+minzRdlDlLPGh",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 # ## SSL Support

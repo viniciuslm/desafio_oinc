@@ -97,6 +97,7 @@ defmodule OincWeb do
 
       import OincWeb.ErrorHelpers
       import OincWeb.Gettext
+      import OincWeb.LiveHelpers
       alias OincWeb.Router.Helpers, as: Routes
     end
   end

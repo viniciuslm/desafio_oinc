@@ -10,14 +10,26 @@ defmodule Oinc.Bank do
     WithdrawnAccount
   }
 
+  alias Oinc.Bank.Notifications
+
   alias Oinc.Bank.Projections.{Account, Address, Client}
 
   alias Oinc.{App, Repo}
 
   import Ecto.Query
 
+  def list_accounts,
+    do:
+      Account
+      |> distinct(true)
+      |> join(:inner, [a], c in Client, on: a.client_id == c.id)
+      |> join(:left, [a, c], a2 in Account, on: a2.client_id == c.id)
+      |> preload([:client, :client_accounts])
+      |> Repo.all()
+
   def get_account(id) do
     case Account
+         |> distinct(true)
          |> join(:left, [a], a2 in Account, on: a2.client_id == a.client_id and a2.id != a.id)
          |> where([a], a.id == ^id)
          |> preload([:client_accounts])
@@ -48,12 +60,21 @@ defmodule Oinc.Bank do
 
   def withdrawn(id, amount), do: check_account_withdrawn(get_account(id), id, amount)
 
+  def list_clients,
+    do:
+      Client
+      |> join(:left, [c], a in Address, on: a.client_id == c.id)
+      |> preload([:address])
+      |> Repo.all()
+
+  def list_clients_form_open_account,
+    do:
+      Client
+      |> select([c], {c.name, c.id})
+      |> Repo.all()
+
   def get_client(id) do
-    case Client
-         |> join(:left, [c], a in Address, on: c.id == a.client_id)
-         |> where([c], c.id == ^id)
-         |> preload([:address])
-         |> Repo.one() do
+    case Repo.get(Client, id) do
       %Client{} = client ->
         {:ok, client}
 
@@ -89,15 +110,16 @@ defmodule Oinc.Bank do
 
     case dispatch_result do
       :ok ->
-        {
-          :ok,
-          %Client{
-            id: id,
-            name: name,
-            cpf: cpf,
-            status: Client.status().active
-          }
+        client = %Client{
+          id: id,
+          name: name,
+          cpf: cpf,
+          status: Client.status().active
         }
+
+        Notifications.broadcast({:ok, client})
+
+        {:ok, client}
 
       reply ->
         reply
@@ -115,9 +137,6 @@ defmodule Oinc.Bank do
         {:error, :not_found}
     end
   end
-
-  def get_address_by_client_id(client_id),
-    do: Repo.get_by(Address, client_id: client_id)
 
   def create_address(%{"city" => city, "state" => state, "client_id" => client_id}),
     do: create_address(%{city: city, state: state, client_id: client_id})

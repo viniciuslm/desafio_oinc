@@ -20,6 +20,8 @@ defmodule Oinc.Application do
       # Start a worker by calling: Oinc.Worker.start_link(arg)
       # {Oinc.Worker, arg}
 
+      {Absinthe.Subscription, OincWeb.Endpoint},
+
       # Bank supervisor
       Oinc.Bank.Supervisor,
 

@@ -1,11 +1,22 @@
-<main class="container">
-  <p class="alert alert-info" role="alert"
-    phx-click="lv:clear-flash"
-    phx-value-key="info"><%= live_flash(@flash, :info) %></p>
+<main>
+    <p class="alert alert-info" role="alert"
+      phx-click="lv:clear-flash"
+      phx-value-key="info"><%= live_flash(@flash, :info) %></p>
 
-  <p class="alert alert-danger" role="alert"
-    phx-click="lv:clear-flash"
-    phx-value-key="error"><%= live_flash(@flash, :error) %></p>
+    <p class="alert alert-danger" role="alert"
+      phx-click="lv:clear-flash"
+      phx-value-key="error"><%= live_flash(@flash, :error) %></p>
 
-  <%= @inner_content %>
-</main>
+
+    <%= render OincWeb.LayoutView, "header.html", assigns %>
+    <div class="flex overflow-hidden bg-white pt-16">
+
+      <%= render OincWeb.LayoutView, "sidebar.html", assigns %>
+
+      <div id="main-content" class="h-full w-full bg-gray-50 relative overflow-y-auto lg:ml-64">
+        <%= @inner_content %>
+      </div>
+
+    </div>
+
+  </main>
