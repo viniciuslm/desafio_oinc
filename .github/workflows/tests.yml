@@ -27,8 +27,7 @@ jobs:
           mix local.hex --force
           mix deps.get
           mix ecto.create
-          mix event_store.create
-          mix event_store.init
+          mix do event_store.create, event_store.init
       - name: ===> Verify Coverage and Tests
         run: mix coveralls.html
     services:
