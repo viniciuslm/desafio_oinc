@@ -1,7 +1,6 @@
-defmodule OincWeb.GraphqlBank.BankSocket do
+defmodule OincWeb.BankSocket do
   use Phoenix.Socket
-  use Absinthe.Phoenix.Socket, schema: FoodexWeb.Schema
-
+  use Absinthe.Phoenix.Socket, schema: OincWeb.Graphql.Bank.Schema
   # A Socket handler
   #
   # It's possible to control the websocket connection and
@@ -9,9 +8,9 @@ defmodule OincWeb.GraphqlBank.BankSocket do
 
   ## Channels
   # Uncomment the following line to define a "room:*" topic
-  # pointing to the `FoodexWeb.RoomChannel`:
+  # pointing to the `OincWeb.RoomChannel`:
   #
-  # channel "room:*", FoodexWeb.RoomChannel
+  # channel "room:*", OincWeb.RoomChannel
   #
   # To create a channel file, use the mix task:
   #
@@ -43,7 +42,7 @@ defmodule OincWeb.GraphqlBank.BankSocket do
   # Would allow you to broadcast a "disconnect" event and terminate
   # all active sockets and channels for a given user:
   #
-  #     Elixir.FoodexWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
+  #     Elixir.OincWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
   @impl true

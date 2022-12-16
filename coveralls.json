@@ -3,8 +3,10 @@
         "lib/oinc/application.ex",
         "lib/oinc_web.ex",
         "lib/oinc_web/telemetry.ex",
+        "lib/oinc_web/channels/bank_socket.ex",
         "lib/oinc_web/views/error_helpers.ex",
         "test/support/channel_case.ex",
+        "test/support/subscription_case.ex",
         "test/support/data_case.ex",
         "test/support/factory.ex",
         "test/support/aggregate_case.ex"

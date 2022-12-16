@@ -19,7 +19,6 @@ defmodule OincWeb.Live.Bank.Subscription do
 
   @impl true
   def handle_info({:new_client, new_client}, socket) do
-    IO.inspect("teste")
     new_clients = socket.assigns.new_clients ++ [new_client]
 
     socket = socket |> assign(new_clients: new_clients)
