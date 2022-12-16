@@ -6,8 +6,8 @@ defmodule Oinc.Bank.Projections.Account do
   @foreign_key_type :binary_id
 
   schema "accounts" do
-    field(:current_balance, :integer)
-    field(:status, :string)
+    field :current_balance, :integer
+    field :status, :string
 
     belongs_to :client, Client
 

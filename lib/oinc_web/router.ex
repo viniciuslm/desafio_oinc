@@ -32,6 +32,11 @@ defmodule OincWeb.Router do
     pipe_through :browser
 
     live "/", Live.Bank, :index
+    live "/accounts", Live.Bank.Accounts, :index
+    live "/accounts/open", Live.Bank.Accounts, :open
+    live "/accounts/:id/deposit", Live.Bank.Accounts, :deposit
+    live "/accounts/:id/withdrawn", Live.Bank.Accounts, :withdrawn
+    live "/accounts/:id/close", Live.Bank.Accounts, :close
     live "/clients", Live.Bank.Clients, :index
     live "/clients/new", Live.Bank.Clients, :new
     live "/clients/:id/address", Live.Bank.Clients, :address

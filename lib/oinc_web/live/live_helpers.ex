@@ -1,11 +1,10 @@
 defmodule OincWeb.LiveHelpers do
-  import Phoenix.LiveView
   import Phoenix.LiveView.Helpers
   alias Phoenix.LiveView.JS
 
   def modal(assigns) do
     ~H"""
-    <div id="modal" class="phx-modal fade-in justify-center items-center h-modal sm:h-full" data-role="modal" phx-remove={hide_modal()}>
+    <div id="modal" class="phx-modal fade-in justify-center items-center h-modal sm:h-full z-index:30" data-role="modal" phx-remove={hide_modal()}>
       <div
             id="modal-content"
             class="phx-modal-content fade-in-scale relative w-full max-w-2xl px-4 h-full md:h-auto"
@@ -34,7 +33,33 @@ defmodule OincWeb.LiveHelpers do
     """
   end
 
-  def modal_delete(assigns) do
+  def modal_error(assigns) do
+    ~H"""
+    <div id="modal_error" class="phx-modal fade-in justify-center items-center h-modal sm:h-full z-index:30" data-role="modal" phx-remove={hide_modal_error()}>
+      <div
+            id="hide_modal_error-conten5"
+            class="phx-modal-content fade-in-scale relative w-full max-w-2xl px-4 h-full md:h-auto"
+            phx-click-away={JS.dispatch("click", to: "#close")}
+            phx-window-keydown={JS.dispatch("click", to: "#close")}
+            phx-key="escape"
+          >
+          <!-- Modal content -->
+            <div class="bg-white rounded-lg shadow relative">
+                <!-- Modal header -->
+                <div class="flex items-start justify-between p-4 border-b rounded-t">
+                    <h3 class="text-xl font-semibold">
+                        <%= @titulo %>
+                    </h3>
+                </div>
+            </div>
+
+            <%= render_slot(@inner_block) %>
+      </div>
+    </div>
+    """
+  end
+
+  def modal_close(assigns) do
     ~H"""
     <div id="modal" class="phx-modal fade-in justify-center items-center h-modal sm:h-full" data-role="modal" phx-remove={hide_modal()}>
       <div
@@ -71,9 +96,21 @@ defmodule OincWeb.LiveHelpers do
     |> JS.hide(to: "#modal-content", transition: "fade-out-scale")
   end
 
+  defp hide_modal_error(js \\ %JS{}) do
+    js
+    |> JS.hide(to: "#hide_modal_error", transition: "fade-out")
+    |> JS.hide(to: "#hide_modal_error-content", transition: "fade-out-scale")
+  end
+
   def show_modal(js \\ %JS{}) do
     js
     |> JS.show(to: "#modal", transition: "fade-in")
     |> JS.show(to: "#modal-content", transition: "fade-in-scale")
+  end
+
+  def show_modal_error(js \\ %JS{}) do
+    js
+    |> JS.show(to: "#modal_error", transition: "fade-in")
+    |> JS.show(to: "#modal-content_error", transition: "fade-in-scale")
   end
 end
