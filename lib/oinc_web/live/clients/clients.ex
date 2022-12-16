@@ -3,8 +3,8 @@ defmodule OincWeb.Live.Bank.Clients do
 
   alias Oinc.Bank
   alias Oinc.Bank.Projections.{Address, Client}
-  alias OincWeb.Live.Bank.Address.Form, as: AddressForm
-  alias OincWeb.Live.Bank.Clients.Form
+  alias OincWeb.Live.Bank.Address.Form, as: FormAddress
+  alias OincWeb.Live.Bank.Clients.Form, as: FormClient
   alias OincWeb.Live.Bank.Clients.Row
   alias OincWeb.Live.Component.Empty
 
@@ -15,7 +15,7 @@ defmodule OincWeb.Live.Bank.Clients do
 
   @impl true
   def handle_params(params, _url, socket) do
-    clients = Bank.list_client()
+    clients = Bank.list_clients()
     live_action = socket.assigns.live_action
 
     socket =

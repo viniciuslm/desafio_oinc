@@ -92,12 +92,12 @@
 <%= case @live_action do %>
 <% :new -> %>
 <.modal titulo={"Client"} return_to={Routes.bank_clients_path(@socket, :index)}>
-    <.live_component module={Form} id={:new} action={@live_action}
+    <.live_component module={FormClient} id={:new} action={@live_action}
         client={@client} return_to={Routes.bank_clients_path(@socket, :index)} />
 </.modal>
 <% :address -> %>
 <.modal titulo={"Address"} return_to={Routes.bank_clients_path(@socket, :index)}>
-    <.live_component module={AddressForm} id={:new} action={@live_action}
+    <.live_component module={FormAddress} id={:new} action={@live_action}
         address={@address} client_id={@client_id} return_to={Routes.bank_clients_path(@socket, :index)} />
 </.modal>
 <% _ -> %>
