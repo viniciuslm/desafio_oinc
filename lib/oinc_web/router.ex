@@ -40,6 +40,7 @@ defmodule OincWeb.Router do
     live "/clients", Live.Bank.Clients, :index
     live "/clients/new", Live.Bank.Clients, :new
     live "/clients/:id/address", Live.Bank.Clients, :address
+    live "/subscriptiom", Live.Bank.Subscription, :index
   end
 
   # Other scopes may use custom stacks.
