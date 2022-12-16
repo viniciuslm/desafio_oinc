@@ -36,6 +36,11 @@ defmodule OincWeb.Live.Bank.Clients.Form do
          |> put_flash(:info, "Client added!")
          |> push_redirect(to: Routes.bank_clients_path(socket, :index))}
 
+      {:error, :validation_failure, error} ->
+        send(self(), {:error, error})
+
+        {:noreply, socket}
+
       {:error, error} ->
         {:noreply,
          socket

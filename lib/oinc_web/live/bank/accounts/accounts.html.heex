@@ -23,16 +23,16 @@
                                     clip-rule="evenodd"></path>
                             </svg>
                             <span class="text-gray-400 ml-1 md:ml-2 text-sm font-medium"
-                                aria-current="page">Clients</span>
+                                aria-current="page">Accounts</span>
                         </div>
                     </li>
                 </ol>
             </nav>
-            <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">Clients</h1>
+            <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">Accounts</h1>
         </div>
         <div class="block sm:flex items-center">
             <div class="w-full">
-                <%= live_patch to: Routes.bank_clients_path(@socket, :new), "data-role": "add-client", replace: false do %>
+                <%= live_patch to: Routes.bank_accounts_path(@socket, :open), "data-role": "open-account", replace: false do %>
                 <button type="button" phx-click={show_modal()}
                     class="text-white bg-cyan-600 hover:bg-cyan-700 focus:ring-4 focus:ring-cyan-200 font-medium inline-flex items-center rounded-lg text-sm px-3 py-2 text-center sm:ml-auto">
                     <svg class="-ml-1 mr-2 h-6 w-6" fill="currentColor" viewBox="0 0 20 20"
@@ -41,7 +41,7 @@
                             d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
                             clip-rule="evenodd"></path>
                     </svg>
-                    Add client
+                    Open account
                 </button>
                 <% end %>
             </div>
@@ -56,30 +56,30 @@
                     <thead class="bg-gray-100">
                         <tr>
                             <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase">
-                                Name
+                                Id
                             </th>
                             <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase">
-                                CPF
+                                Client Name
+                            </th>
+                            <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase">
+                                Current Balance
                             </th>
                             <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase">
                                 Status
                             </th>
                             <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase">
-                                City
-                            </th>
-                            <th scope="col" class="p-4 text-left text-xs font-medium text-gray-500 uppercase">
-                                State
+                                Accounts Client
                             </th>
                             <th scope="col" class="p-4">
                             </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <%= if Enum.count(@clients) == 0 do %>
+                        <%= if Enum.count(@accounts) == 0 do %>
                         <.live_component module={Empty} id="Empty" colspan={6} />
                         <% else %>
-                        <%= for client <- @clients do %>
-                        <.live_component module={Row} id={client.id} client={client} />
+                        <%= for account <- @accounts do %>
+                        <.live_component module={Row} id={account.id} account={account} />
                         <% end %>
                         <% end %>
                     </tbody>
@@ -90,15 +90,25 @@
 </div>
 
 <%= case @live_action do %>
-<% :new -> %>
-<.modal titulo={"Client"} return_to={Routes.bank_clients_path(@socket, :index)}>
-    <.live_component module={FormClient} id={:new} action={@live_action}
-        client={@client} return_to={Routes.bank_clients_path(@socket, :index)} />
+<% :open -> %>
+<.modal titulo={"Open Account"} return_to={Routes.bank_accounts_path(@socket, :index)}>
+    <.live_component module={Open} id={:open} action={@live_action}
+        open_account={@open_account} return_to={Routes.bank_accounts_path(@socket, :index)} />
 </.modal>
-<% :address -> %>
-<.modal titulo={"Address"} return_to={Routes.bank_clients_path(@socket, :index)}>
-    <.live_component module={FormAddress} id={:new} action={@live_action}
-        address={@address} client_id={@client_id} return_to={Routes.bank_clients_path(@socket, :index)} />
+<% moviment when moviment in [:deposit, :withdrawn] -> %>
+<.modal titulo={humanize(@live_action) <> " Account"} return_to={Routes.bank_accounts_path(@socket, :index)}>
+    <.live_component module={Moviment} id={@live_action} action={@live_action}
+        moviment_account={@moviment_account} account_id={@account_id} return_to={Routes.bank_accounts_path(@socket, :index)} />
 </.modal>
+<% :close -> %>
+<.modal_close titulo={"Close Account"} return_to={Routes.bank_accounts_path(@socket, :index)}>
+    <.live_component module={Close} id={@account_id} action={@live_action} message={"Are you sure you want to close the account?"}
+        return_to={Routes.bank_accounts_path(@socket, :index)} />
+</.modal_close>
 <% _ -> %>
+<% end %>
+<%= if @validation_failure do %>
+<.modal_error titulo={"Error"} return_to={Routes.bank_accounts_path(@socket, :index)}>
+    <.live_component module={Error} id={:error} error={@error} return_to={Routes.bank_accounts_path(@socket, :index)} />
+</.modal_error>
 <% end %>
