@@ -11,11 +11,11 @@ defmodule OincWeb.Graphql.Bank.Schema.Types.Account do
     field :current_balance, non_null(:integer), description: "Accounts current_balance"
     field :status, non_null(:string), description: "Accounts status"
 
-    field :client, non_null(:client), description: "Client Account" do
+    field :client, non_null(:client), description: "Client" do
       resolve dataloader(Bank, :client, args: %{scope: :client})
     end
 
-    field :client_accounts, list_of(:account), description: "Accounts Client Account" do
+    field :client_accounts, list_of(:account), description: "Accounts Client" do
       resolve dataloader(Bank, :client_accounts, args: %{scope: :client})
     end
   end
